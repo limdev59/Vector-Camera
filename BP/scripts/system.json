@@ -1,0 +1,36 @@
+/*
+scripts/
+|-- index.js
+|-- commands/
+|  |-- move.js (test code)
+|  |-- cam.js (test code)
+|  |-- scenarioTest.js (test code)
+|-- features/
+|  |-- Anchor.js
+|  |-- scenario.js
+|-- managers/
+|  |-- CommandManager.js
+|  |-- AnchorManager.js
+|  |-- PlayerManager.js
+|  |-- ServerManager.js
+|  |-- ScenarioManager.js
+|-- utils/
+|  |-- Utilities.js
+|  |--
+|  |--
+*/
+
+{
+    "system": {
+        "Sequences":[
+            "default_sequence",
+            "+new_sequences..."
+        ],
+        "Anchors": [
+            "default_Anchor"
+        ]
+    },
+    "main": {
+    }
+}
+

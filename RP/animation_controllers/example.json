@@ -1,0 +1,74 @@
+{
+	"format_version": "1.10.0",
+	"animation_controllers": {
+		"controller.animation.blank": {
+			"initial_state": "default",
+			"states": {
+				"default": {
+					"transitions": [
+						{
+							"a": "query.skin_id == 1"
+						},
+						{
+							"b": "query.skin_id == 2"
+						},
+						{
+							"c": "query.skin_id == 3"
+						}
+					],
+					"animations": [
+						"D"
+					]
+				},
+				"a": {
+					"transitions": [
+						{
+							"default": "query.skin_id == 0"
+						},
+						{
+							"b": "query.skin_id == 2"
+						},
+						{
+							"c": "query.skin_id == 3"
+						}
+					],
+					"animations": [
+						"A"
+					]
+				},
+				"b": {
+					"transitions": [
+						{
+							"default": "query.skin_id == 0"
+						},
+						{
+							"a": "query.skin_id == 1"
+						},
+						{
+							"c": "query.skin_id == 3"
+						}
+					],
+					"animations": [
+						"B"
+					]
+				},
+				"c": {
+					"transitions": [
+						{
+							"default": "query.skin_id == 0"
+						},
+						{
+							"a": "query.skin_id == 1"
+						},
+						{
+							"b": "query.skin_id == 2"
+						}
+					],
+					"animations": [
+						"C"
+					]
+				}
+			}
+		}
+	}
+}

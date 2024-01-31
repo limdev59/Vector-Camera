@@ -6,7 +6,8 @@ import { MoveCommand } from "../commands/move";
 import { Utils } from "../utils/Utilities";
 import { playerManager } from "../managers/PlayerManager";
 import { ScenarioTestCommand } from "../commands/scenarioTest";
-import { CamCommand } from "../../../../../Vector%20Camera/bp/scripts/src/commands/cam";
+import { CamCommand } from "../commands/cam";
+import { CubicCommand } from "../commands/cubic";
 
 export class ServerManager {
     public anchors = anchorManager;
@@ -23,6 +24,7 @@ export class ServerManager {
         commandManager.addCommand('move', new MoveCommand());
         commandManager.addCommand('scenariotest', new ScenarioTestCommand());
         commandManager.addCommand('cam', new CamCommand());
+        commandManager.addCommand('cub', new CubicCommand())
 
         // prefix
         world.beforeEvents.chatSend.subscribe((e) => {
@@ -43,13 +45,12 @@ export class ServerManager {
         world.afterEvents.playerJoin.subscribe(() => this.players.scan());
 
         // main
-        let tickCnt = 0;
         const tick = () => {
             system.run(() => {
 
                 world.getAllPlayers().forEach((pl) => {
                     if (pl.isSneaking) {
-                        anchorManager.createAnchor(pl.location);
+
                     } else {
 
                     }

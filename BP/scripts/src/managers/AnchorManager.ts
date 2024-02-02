@@ -3,6 +3,8 @@ import { Anchor } from "../features/Anchor";
 
 export class AnchorManager {
     data: Anchor[] = [];
+
+
     createAnchor: (location: Vector3) => Anchor;
     deleteAnchor: (anchor: Anchor) => void;
     getLocation: (id: number) => Vector3;

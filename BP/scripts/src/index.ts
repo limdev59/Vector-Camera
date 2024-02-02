@@ -1,39 +1,42 @@
 import { EasingType, Player, system, Vector3, world } from "@minecraft/server";
-import { calculateTangents, cubicHermite, dcubicHermite } from "./utils/hermite";
-import { CamOptions } from "./features/Scenario";
+import { cubicHermite, dcubicHermite } from "./utils/hermite";
+import { CamOptions, Scenario } from "./features/Scenario";
 import { ServerManager } from "./managers/ServerManager";
+import { Utils } from "./utils/Utilities";
 
 export const Server = new ServerManager();
 
 
+const sc = Server.scenarios.addScenario("tc", "Lim Develop")
 
-let i = 0;
-let arr: { position: Vector3, tangent: Vector3 }[] = [
-    { position: Server.anchors.createAnchor({ x: -11, y: -60, z: 17 }).location, tangent: { x: 0, y: 0, z: 0 } },
-    { position: Server.anchors.createAnchor({ x: -6, y: -59, z: 12 }).location, tangent: { x: 0, y: 0, z: 0 } },
-    { position: Server.anchors.createAnchor({ x: -1, y: -58, z: 17 }).location, tangent: { x: 0, y: 0, z: 0 } },
-    { position: Server.anchors.createAnchor({ x: -6, y: -57, z: 22 }).location, tangent: { x: 0, y: 0, z: 0 } }
-];
+Server.anchors.createAnchor({ x: 0, y: 0, z: 0 })
+Server.anchors.createAnchor({ x: -1, y: -1, z: -1 })
+Server.anchors.createAnchor({ x: -2, y: -3, z: -2 })
+Server.anchors.createAnchor({ x: -3, y: -5, z: -3 })
 
-const tangents = calculateTangents(arr.map(anchor => anchor.position));
 
-for (let i = 0; i < arr.length; ++i) {
-    arr[i].tangent = tangents[i];
+
+for (let s of Server.anchors.data) {
+    sc.addAnchor(s);
 }
 
-system.runInterval(() => {
-    world.getAllPlayers().forEach((pl) => {
-        if (!pl.isSneaking) {
-            if (pl instanceof Player) {
-                if (i < 128) {
-                    const t = (1 / 32) * i;
-                    const newPosition = dcubicHermite(arr[i].position, arr[i].tangent, arr[i + 1].position, arr[i + 1].tangent, t);
-                    pl.camera.setCamera("minecraft:free", new CamOptions(newPosition, 0.5, EasingType.Spring));
-                    i++;
-                } else if (i > 128) {
-                    i = 0;
+sc.getVelocity();
+Server.scenarios.test();
+
+world.getAllPlayers().forEach((pl) => {
+    let i = 0
+    system.runInterval(() => {
+        if (i < 3) {
+            ++i;
+            let j = 0;
+            system.runInterval(() => {
+                if (j < 2) {
+                    ++j
+                    const nP = dcubicHermite(sc.loc[i], sc.dh[i], sc.loc[i + 1], sc.dh[i + 1], +(0.2 * j).toFixed(0), null).map(v => +v.toFixed(3));
+                    Utils.broadcast(`${JSON.stringify(nP)}`);
+                    system.run(() => pl.camera.setCamera("minecraft:free", new CamOptions({ x: +nP[0].toFixed(3), y: +nP[1].toFixed(3), z: +nP[2].toFixed(3) }, 0.3, EasingType.Linear, { x: -3, y: -5, z: -3 })));
                 }
-            }
+            }, 5)
         }
-    });
-}, 100);
+    }, 60);
+});

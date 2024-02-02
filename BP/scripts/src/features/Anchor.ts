@@ -1,19 +1,17 @@
 import { Vector, Vector3, Entity, Player, world, system } from "@minecraft/server";
+import { Utils } from "../utils/Utilities";
 
 export class Anchor {
     static idcnt: number = 0;
-
     id: number;
-
     location: Vector3;
     entity: Entity;
-
     constructor() {
         this.id = ++Anchor.idcnt;
         this.location = { x: 0, y: 0, z: 0 };
+        Utils.broadcast("id" + JSON.stringify(this.id, null, 2))
         system.run(() => { this.entity = world.getDimension("overworld").spawnEntity("vc:anchor", this.location) })
     }
-
     move: (newLocation: Vector3) => Anchor;
     moveTo: (target: Anchor | Entity | Player | Vector3 | { x: number; y: number; z: number }) => Anchor;
 }

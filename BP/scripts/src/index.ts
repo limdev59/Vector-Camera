@@ -1,5 +1,5 @@
-import { EasingType, Player, system, Vector3, world } from "@minecraft/server";
-import { cubicHermite, dcubicHermite } from "./utils/hermite";
+import { EasingType, MolangVariableMap, Player, system, Vector3, world } from "@minecraft/server";
+import { cubicHermite, interpolate } from "./utils/hermite";
 import { CamOptions, Scenario } from "./features/Scenario";
 import { ServerManager } from "./managers/ServerManager";
 import { Utils } from "./utils/Utilities";
@@ -7,12 +7,39 @@ import { Utils } from "./utils/Utilities";
 export const Server = new ServerManager();
 
 
+function spawnConfetti(location: Vector3) {
+    for (let i = 0; i < 20; i++) {
+        const molang = new MolangVariableMap();
+
+        molang.setColorRGB('variable.color', {
+            red: Math.random(),
+            green: Math.random(),
+            blue: Math.random()
+        });
+
+        const newLocation: Vector3 = {
+            x: location.x + Math.floor(Math.random() * 1) - 0.5,
+            y: location.y + Math.floor(Math.random() * 1) - 0.5,
+            z: location.z + Math.floor(Math.random() * 1) - 0.5,
+        };
+        world.getDimension("minecraft:overworld").spawnParticle('minecraft:colored_flame_particle', newLocation, molang);
+    }
+}
+
 const sc = Server.scenarios.addScenario("tc", "Lim Develop")
 
-Server.anchors.createAnchor({ x: 0, y: 0, z: 0 })
-Server.anchors.createAnchor({ x: -1, y: -1, z: -1 })
-Server.anchors.createAnchor({ x: -2, y: -3, z: -2 })
-Server.anchors.createAnchor({ x: -3, y: -5, z: -3 })
+// Server.anchors.createAnchor({ x: 0, y: 0, z: 0 });
+// Server.anchors.createAnchor({ x: 8, y: 0, z: 0 });
+// Server.anchors.createAnchor({ x: 0, y: 8, z: 0 });
+// Server.anchors.createAnchor({ x: -8, y: 0, z: 0 });
+// Server.anchors.createAnchor({ x: 0, y: -8, z: 0 });
+// Server.anchors.createAnchor({ x: 0, y: 0, z: 0 });
+Server.anchors.createAnchor({ x: 0, y: 0, z: 8 });
+Server.anchors.createAnchor({ x: 32, y: 0, z: 0 });
+Server.anchors.createAnchor({ x: 0, y: 0, z: -40 });
+Server.anchors.createAnchor({ x: -32, y: 0, z: 0 });
+Server.anchors.createAnchor({ x: 0, y: 0, z: 8 });
+
 
 
 
@@ -22,21 +49,30 @@ for (let s of Server.anchors.data) {
 
 sc.getVelocity();
 Server.scenarios.test();
-
+let chicken = world.getDimension("minecraft:overworld").spawnEntity("minecraft:chicken", { x: 0, y: 0, z: 0 });
 world.getAllPlayers().forEach((pl) => {
     let i = 0
+    for (let t = 0; t < 200; ++t) {
+        const nP = interpolate(t * 0.005, sc.loc);
+        spawnConfetti({ x: +nP[0].toFixed(3), y: +nP[1].toFixed(3), z: +nP[2].toFixed(3) });
+    }
     system.runInterval(() => {
         if (i < 3) {
             ++i;
-            let j = 0;
+            let t = 0;
             system.runInterval(() => {
-                if (j < 2) {
-                    ++j
-                    const nP = dcubicHermite(sc.loc[i], sc.dh[i], sc.loc[i + 1], sc.dh[i + 1], +(0.2 * j).toFixed(0), null).map(v => +v.toFixed(3));
-                    Utils.broadcast(`${JSON.stringify(nP)}`);
-                    system.run(() => pl.camera.setCamera("minecraft:free", new CamOptions({ x: +nP[0].toFixed(3), y: +nP[1].toFixed(3), z: +nP[2].toFixed(3) }, 0.3, EasingType.Linear, { x: -3, y: -5, z: -3 })));
+                if (t < 200) {
+                    ++t
+                    const nP = interpolate(t * 0.005, sc.loc);
+                    system.run(() => { chicken.teleport({ x: +nP[0].toFixed(3), y: +nP[1].toFixed(3), z: +nP[2].toFixed(3) }) });
+                    //system.run(() => pl.camera.setCamera("minecraft:free", new CamOptions({ x: +nP[0].toFixed(3), y: +nP[1].toFixed(3), z: +nP[2].toFixed(3) }, 1.0, EasingType.Linear, pl.location)));
                 }
-            }, 5)
+            }, 1)
         }
-    }, 60);
+    }, 200);
 });
+
+for (let t = 0; t < 200; ++t) {
+    const nP = interpolate(t * 0.005, sc.loc);
+    spawnConfetti({ x: +nP[0].toFixed(3), y: +nP[1].toFixed(3), z: +nP[2].toFixed(3) });
+}

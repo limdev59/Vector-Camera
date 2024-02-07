@@ -1,8 +1,9 @@
 import { EasingType, MolangVariableMap, Player, system, Vector3, world } from "@minecraft/server";
-import { cubicHermite, interpolate } from "./utils/hermite";
+import { bezierCurveinterpolate } from "./utils/BezierCurve";
 import { CamOptions, Scenario } from "./features/Scenario";
 import { ServerManager } from "./managers/ServerManager";
 import { Utils } from "./utils/Utilities";
+import { firstOrderSpline, linearSpline } from "./utils/CubicSplineInterpolation";
 
 export const Server = new ServerManager();
 
@@ -28,12 +29,6 @@ function spawnConfetti(location: Vector3) {
 
 const sc = Server.scenarios.addScenario("tc", "Lim Develop")
 
-// Server.anchors.createAnchor({ x: 0, y: 0, z: 0 });
-// Server.anchors.createAnchor({ x: 8, y: 0, z: 0 });
-// Server.anchors.createAnchor({ x: 0, y: 8, z: 0 });
-// Server.anchors.createAnchor({ x: -8, y: 0, z: 0 });
-// Server.anchors.createAnchor({ x: 0, y: -8, z: 0 });
-// Server.anchors.createAnchor({ x: 0, y: 0, z: 0 });
 Server.anchors.createAnchor({ x: 0, y: 0, z: 8 });
 Server.anchors.createAnchor({ x: 32, y: 0, z: 0 });
 Server.anchors.createAnchor({ x: 0, y: 0, z: -40 });
@@ -53,7 +48,7 @@ let chicken = world.getDimension("minecraft:overworld").spawnEntity("minecraft:c
 world.getAllPlayers().forEach((pl) => {
     let i = 0
     for (let t = 0; t < 200; ++t) {
-        const nP = interpolate(t * 0.005, sc.loc);
+        const nP = bezierCurveinterpolate(t * 0.005, sc.loc);
         spawnConfetti({ x: +nP[0].toFixed(3), y: +nP[1].toFixed(3), z: +nP[2].toFixed(3) });
     }
     system.runInterval(() => {
@@ -63,7 +58,7 @@ world.getAllPlayers().forEach((pl) => {
             system.runInterval(() => {
                 if (t < 200) {
                     ++t
-                    const nP = interpolate(t * 0.005, sc.loc);
+                    const nP = bezierCurveinterpolate(t * 0.005, sc.loc);
                     system.run(() => { chicken.teleport({ x: +nP[0].toFixed(3), y: +nP[1].toFixed(3), z: +nP[2].toFixed(3) }) });
                     //system.run(() => pl.camera.setCamera("minecraft:free", new CamOptions({ x: +nP[0].toFixed(3), y: +nP[1].toFixed(3), z: +nP[2].toFixed(3) }, 1.0, EasingType.Linear, pl.location)));
                 }
@@ -73,6 +68,11 @@ world.getAllPlayers().forEach((pl) => {
 });
 
 for (let t = 0; t < 200; ++t) {
-    const nP = interpolate(t * 0.005, sc.loc);
+    const nP = bezierCurveinterpolate(t * 0.005, sc.loc);
+    spawnConfetti({ x: +nP[0].toFixed(3), y: +nP[1].toFixed(3), z: +nP[2].toFixed(3) });
+}
+
+for (let t = 0; t < 200; ++t) {
+    const nP = linearSpline(t * 0.005, sc.loc);
     spawnConfetti({ x: +nP[0].toFixed(3), y: +nP[1].toFixed(3), z: +nP[2].toFixed(3) });
 }

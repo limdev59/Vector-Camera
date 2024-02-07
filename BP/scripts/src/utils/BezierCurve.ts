@@ -1,4 +1,4 @@
-export function interpolate(t: number, p: any[]) {
+export function bezierCurveinterpolate(t: number, p: any[]) {
     let order = p.length - 1;
     let d = p[0].length;
     let v = p.map(function (point) {

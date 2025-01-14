@@ -1,0 +1,30 @@
+{
+	"format_version": "1.8.0",
+	"render_controllers": {
+		"controller.render.anchor": {
+			"geometry": "Geometry.default",
+			"materials": [
+				{
+					"head": "Material.default"
+				},
+				{
+					"glint": "Material.glint"
+				}
+			],
+			"textures": [
+				"Texture.default"
+			],
+			"part_visibility": [
+				{
+					"*": true
+				},
+				{
+					"head": "query.property('vc:select') != 0 && (query.property('vc:select') == 1 || query.property('vc:select') == 2)"
+				},
+				{
+					"glint": "query.property('vc:select') != 0 && (query.property('vc:select') == 2)"
+				}
+			]
+		}
+	}
+}

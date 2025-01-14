@@ -1,0 +1,10 @@
+item.spawn_egg.entity.vc:dummy.name=Spawn dummy
+entity.vc:dummy.name=dummy
+item.spawn_egg.entity.vc:anchor.name=Spawn Anchor
+entity.vc:anchor.name=Anchor
+item.spawn_egg.entity.vc:sdasdas.name=Spawn sdasdas
+entity.vc:sdasdas.name=sdasdas
+item.spawn_egg.entity.vc:a.name=Spawn a
+entity.vc:a.name=a
+item.spawn_egg.entity.vc:c.name=Spawn c
+entity.vc:c.name=c

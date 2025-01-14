@@ -1,0 +1,42 @@
+{
+	"format_version": 2,
+	"metadata": {
+		"authors": [
+			"Lim"
+		],
+		"generated_with": {
+			"bridge": [
+				"2.7.42"
+			],
+			"dash": [
+				"0.11.7"
+			]
+		}
+	},
+	"header": {
+		"name": "Vector Camera",
+		"description": "Vector Camera prototype",
+		"min_engine_version": [
+			1,
+			20,
+			40
+		],
+		"uuid": "687e81a9-16c0-4349-9399-ee08e17ba768",
+		"version": [
+			1,
+			0,
+			0
+		]
+	},
+	"modules": [
+		{
+			"type": "resources",
+			"uuid": "5c1309c0-8825-4b09-af86-12a6b7d2d738",
+			"version": [
+				1,
+				0,
+				0
+			]
+		}
+	]
+}

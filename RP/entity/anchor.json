@@ -1,0 +1,26 @@
+{
+	"format_version": "1.8.0",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "vc:anchor",
+			"materials": {
+				"default": "iron_golem",
+				"glint": "charged_creeper"
+			},
+			"textures": {
+				"default": "textures/entity/anchor"
+			},
+			"geometry": {
+				"default": "geometry.anchor"
+			},
+			"spawn_egg": {
+				"base_color": "#FFFFFF",
+				"overlay_color": "#FFFFFF"
+			},
+			"render_controllers": [
+				"controller.render.anchor"
+			],
+			"enable_attachables": true
+		}
+	}
+}

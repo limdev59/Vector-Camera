@@ -1,0 +1,47 @@
+{
+	"entity_sounds": {
+		"entities": {
+			"vc:a": {
+				"events": {
+					"ambient": "mob.a.moan",
+					"death": "mob.a.death",
+					"hurt": "mob.a.scream",
+					"scream": "mob.a.affectionate_scream",
+					"shoot": {
+						"sound": "mob.a.fireball",
+						"volume": 0.7
+					},
+					"warn": "mob.a.charge"
+				},
+				"pitch": [
+					0.8,
+					1.2
+				],
+				"volume": 600
+			},
+			"vc:c": {
+				"volume": 1,
+				"pitch": [
+					0.8,
+					1.2
+				],
+				"events": {
+					"ambient.tame": "mob.c.meow",
+					"ambient": "mob.c.straymeow",
+					"hurt": {
+						"sound": "mob.c.hit",
+						"volume": 0.45
+					},
+					"death": {
+						"sound": "mob.c.hit",
+						"volume": 0.5,
+						"pitch": 0.9
+					},
+					"purr": "mob.c.purr",
+					"purreow": "mob.c.purreow",
+					"eat": "mob.c.eat"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,117 @@
+{
+	"format_version": "1.16.0",
+	"minecraft:entity": {
+		"description": {
+			"identifier": "vc:anchor",
+			"is_spawnable": true,
+			"is_summonable": true,
+			"is_experimental": false,
+			"properties": {
+				"vc:select": {
+					"type": "int",
+					"range": [
+						0,
+						2
+					],
+					"default": 1,
+					"client_sync": true
+				},
+				"vc:id": {
+					"type": "int",
+					"range": [
+						0,
+						2147483647
+					],
+					"default": 0,
+					"client_sync": true
+				}
+			},
+			"scripts": {
+				"pre_animation": [
+					"variable.render = query.variant;"
+				]
+			}
+		},
+		"component_groups": {
+			"vc:despawn": {
+				"minecraft:instant_despawn": {}
+			}
+		},
+		"components": {
+			"minecraft:target_nearby_sensor": {
+				"inside_range": 10,
+				"must_see": false,
+				"on_inside_range": {
+					"filters": [
+						{
+							"test": "int_property",
+							"operator": "==",
+							"domain": "vc:id",
+							"subject": "other",
+							"value": "(query.property('vc:id') + 1)"
+						}
+					]
+				}
+			},
+			"minecraft:variant": {
+				"value": 1
+			},
+			"minecraft:collision_box": {
+				"width": 0,
+				"height": 0
+			},
+			"minecraft:damage_sensor": {
+				"triggers": [
+					{
+						"cause": "all",
+						"deals_damage": false
+					}
+				]
+			},
+			"minecraft:environment_sensor": {
+				"triggers": [
+					{
+						"filters": {
+							"test": "has_tag",
+							"subject": "self",
+							"operator": "==",
+							"value": "d"
+						},
+						"event": "vc:despawn_event"
+					}
+				]
+			},
+			"minecraft:health": {
+				"value": 1,
+				"max": 1
+			},
+			"minecraft:movement": {
+				"value": 0
+			},
+			"minecraft:nameable": {
+				"allow_name_tag_renaming": false,
+				"always_show": true
+			},
+			"minecraft:loot": {
+				"table": "loot_tables/entities/bat.json"
+			},
+			"minecraft:physics": {
+				"has_gravity": false
+			},
+			"minecraft:type_family": {
+				"family": [
+					"anchor"
+				]
+			}
+		},
+		"events": {
+			"vc:despawn_event": {
+				"add": {
+					"component_groups": [
+						"vc:despawn"
+					]
+				}
+			}
+		}
+	}
+}

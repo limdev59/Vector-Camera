@@ -42,4 +42,4 @@ export class CamCommand extends Command {
 
 // easeOptions:{easeTime: number, easeType: EasingType.?}
 // location?: Vector3
-// rotation: Vector32
+// rotation: Vector2

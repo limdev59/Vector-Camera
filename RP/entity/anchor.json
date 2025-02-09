@@ -1,5 +1,5 @@
 {
-	"format_version": "1.8.0",
+	"format_version": "1.10.0",
 	"minecraft:client_entity": {
 		"description": {
 			"identifier": "vc:anchor",
@@ -13,13 +13,29 @@
 			"geometry": {
 				"default": "geometry.anchor"
 			},
-			"spawn_egg": {
-				"base_color": "#FFFFFF",
-				"overlay_color": "#FFFFFF"
+			"scripts": {
+				"pre_animation": [
+					"variable.anchor_id = query.property('vc:id');"
+				],
+				"animate": [
+					"particle"
+				]
+			},
+			"animations": {
+				"particle": "animation.anchor.particle"
 			},
 			"render_controllers": [
 				"controller.render.anchor"
 			],
+			"spawn_egg": {
+				"base_color": "#FFFFFF",
+				"overlay_color": "#FFFFFF"
+			},
+			"particle_effects": {
+				"anchor_position": "vc:anchor_position",
+				"portal": "vc:portal"
+			},
+			"queryable_geometry": "geometry.anchor",
 			"enable_attachables": true
 		}
 	}

@@ -1,4 +1,4 @@
-	import { Vector3, world, Dimension, Player, Entity } from "@minecraft/server";
+		import { Vector3, Vector2, world, system, Dimension, Player, Entity } from "@minecraft/server";
 import { Util } from "../Util/Util";
 import { Anchor } from "../Object/Anchor";
 import ScenarioManager from "../Manager/ScenarioManager";
@@ -17,13 +17,13 @@ class AnchorManager {
         return AnchorManager._instance;
     }
 
-    public createAnchor(location: Vector3, dimension: Dimension): Anchor {
+    public createAnchor(location: Vector3, rotation: Vector2, dimension: Dimension): Anchor {
         // vc:anchor 엔티티 생성
-        const entity = dimension.spawnEntity("vc:anchor", location);
+        const entity = this.spawnAnchorEntity(location, dimension);
 
         // 앵커 객체 생성
-        const anchor = new Anchor(this.nextAnchorId++, location, entity, dimension);
-        Util.tell(`${this.nextAnchorId}`, "Mini9041");
+        const anchor = new Anchor(this.nextAnchorId++, location, rotation, entity, dimension);
+        anchor.Init();
         this.anchors.set(anchor.id, anchor);
 
         return anchor;
@@ -48,11 +48,16 @@ class AnchorManager {
     }
 
     public checkAndRespawnEntity(id: number): void {
-        const anchor = this.anchors.get(id);
+        const anchor: Anchor = this.anchors.get(id);
         if (anchor && !anchor.isEntityAlive()) {
             // 앵커 엔티티가 유효하지 않다면 다시 생성
-            const newEntity = this.spawnAnchorEntity(anchor.location, anchor.dimension);
-            anchor.setEntity(newEntity);
+            const newEntity = this.spawnAnchorEntity(anchor.position, anchor.dimension);
+
+            anchor.entity = newEntity;
+            system.run(() => {
+                anchor.entity.setProperty("vc:id", id);
+                Util.tell(`l2${anchor.entity.getProperty("vc:id")}`, "Lim Develop");
+            });
         }
     }
 
@@ -72,10 +77,10 @@ class AnchorManager {
         const playerLocation = player.location;
         const playerViewVector = this.getViewVector(player);
 
-        selectedScenario.anchors.forEach(anchorId => {
-            const anchor = this.anchors.get(anchorId);
+        selectedScenario.anchors.forEach(anc => {
+            const anchor = this.anchors.get(anc.id);
             if (anchor) {
-                const anchorVector = this.subtractVectors(anchor.location, playerLocation);
+                const anchorVector = this.subtractVectors(anchor.position, playerLocation);
                 const distance = this.getVectorLength(anchorVector);
 
                 if (distance <= maxDistance) {

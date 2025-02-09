@@ -1,5 +1,5 @@
 {
-	"format_version": "1.16.0",
+	"format_version": "1.21.50",
 	"minecraft:entity": {
 		"description": {
 			"identifier": "vc:anchor",
@@ -25,6 +25,115 @@
 					"default": 0,
 					"client_sync": true
 				}
+				// ,
+				// "vc:start_x": {
+				// 	"type": "float",
+				// 	"range": [
+				// 		-30000000.0,
+				// 		30000000.0
+				// 	],
+				// 	"default": 0.0,
+				// 	"client_sync": true
+				// },
+				// "vc:start_y": {
+				// 	"type": "float",
+				// 	"range": [
+				// 		-104.0,
+				// 		640.0
+				// 	],
+				// 	"default": 0.0,
+				// 	"client_sync": true
+				// },
+				// "vc:start_z": {
+				// 	"type": "float",
+				// 	"range": [
+				// 		-30000000.0,
+				// 		30000000.0
+				// 	],
+				// 	"default": 0.0,
+				// 	"client_sync": true
+				// },
+				// "vc:cp1_x": {
+				// 	"type": "float",
+				// 	"range": [
+				// 		-30000000.0,
+				// 		30000000.0
+				// 	],
+				// 	"default": 0.0,
+				// 	"client_sync": true
+				// },
+				// "vc:cp1_y": {
+				// 	"type": "float",
+				// 	"range": [
+				// 		-104.0,
+				// 		640.0
+				// 	],
+				// 	"default": 0.0,
+				// 	"client_sync": true
+				// },
+				// "vc:cp1_z": {
+				// 	"type": "float",
+				// 	"range": [
+				// 		-30000000.0,
+				// 		30000000.0
+				// 	],
+				// 	"default": 0.0,
+				// 	"client_sync": true
+				// },
+				// "vc:cp2_x": {
+				// 	"type": "float",
+				// 	"range": [
+				// 		-30000000.0,
+				// 		30000000.0
+				// 	],
+				// 	"default": 0.0,
+				// 	"client_sync": true
+				// },
+				// "vc:cp2_y": {
+				// 	"type": "float",
+				// 	"range": [
+				// 		-104.0,
+				// 		640.0
+				// 	],
+				// 	"default": 0.0,
+				// 	"client_sync": true
+				// },
+				// "vc:cp2_z": {
+				// 	"type": "float",
+				// 	"range": [
+				// 		-30000000.0,
+				// 		30000000.0
+				// 	],
+				// 	"default": 0.0,
+				// 	"client_sync": true
+				// },
+				// "vc:end_x": {
+				// 	"type": "float",
+				// 	"range": [
+				// 		-30000000.0,
+				// 		30000000.0
+				// 	],
+				// 	"default": 0.0,
+				// 	"client_sync": true
+				// },
+				// "vc:end_y": {
+				// 	"type": "float",
+				// 	"range": [
+				// 		-104.0,
+				// 		640.0
+				// 	],
+				// 	"default": 0.0,
+				// 	"client_sync": true
+				// },
+				// "vc:end_z": {
+				// 	"type": "float",
+				// 	"range": [
+				// 		-30000000.0,
+				// 		30000000.0
+				// 	],
+				// 	"default": 0.0,
+				// 	"client_sync": true
+				// }
 			},
 			"scripts": {
 				"pre_animation": [
@@ -38,21 +147,6 @@
 			}
 		},
 		"components": {
-			"minecraft:target_nearby_sensor": {
-				"inside_range": 10,
-				"must_see": false,
-				"on_inside_range": {
-					"filters": [
-						{
-							"test": "int_property",
-							"operator": "==",
-							"domain": "vc:id",
-							"subject": "other",
-							"value": "(query.property('vc:id') + 1)"
-						}
-					]
-				}
-			},
 			"minecraft:variant": {
 				"value": 1
 			},
@@ -64,7 +158,7 @@
 				"triggers": [
 					{
 						"cause": "all",
-						"deals_damage": false
+						"deals_damage": "no"
 					}
 				]
 			},

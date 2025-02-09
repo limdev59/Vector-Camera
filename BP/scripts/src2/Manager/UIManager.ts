@@ -196,7 +196,9 @@ class UIManager {
             .title("앵커 직접 추가")
             .textField("X 좌표", "X 좌표를 입력하세요")
             .textField("Y 좌표", "Y 좌표를 입력하세요")
-            .textField("Z 좌표", "Z 좌표를 입력하세요");
+            .textField("Z 좌표", "Z 좌표를 입력하세요")
+            .textField("X(좌우) 각도", "X 각도를 입력하세요")
+            .textField("Y(상하) 각도", "Y 각도를 입력하세요");
 
         const response = await form.show(player);
 
@@ -209,25 +211,34 @@ class UIManager {
         const y = parseFloat(response.formValues[1] as string);
         const z = parseFloat(response.formValues[2] as string);
 
+        const rx = parseFloat(response.formValues[3] as string);
+        const ry = parseFloat(response.formValues[4] as string);
+
         if (isNaN(x) || isNaN(y) || isNaN(z)) {
             await this.showErrorMessage(player, "잘못된 좌표 입력입니다.");
             this.showDirectAddAnchorForm(player, scenarioId);
             return;
         }
+        if (isNaN(rx) || isNaN(ry)) {
+            await this.showErrorMessage(player, "잘못된 각도 입력입니다.");
+            this.showDirectAddAnchorForm(player, scenarioId);
+            return;
+        }
 
-        const location = { x, y, z };
+        const position = { x, y, z };
+        const rotation = { rx, ry };
 
-        ScenarioManager.Instance().addAnchorToScenario(scenarioId, location);
-        await this.showSuccessMessage(player, `앵커가 추가되었습니다.\nx: ${x} \ny: ${y} \nz: ${z}`);
+        ScenarioManager.Instance().addAnchorToScenario(scenarioId, position, rotation);
+        await this.showSuccessMessage(player, `앵커가 추가되었습니다.\nx: ${x} \ny: ${y} \nz: ${z} \nrx: ${rx} \nry: ${ry}`);
         this.showEditScenarioForm(player);
     }
 
     async addAnchorAtPlayerLocation(player: Player, scenarioId: number): Promise<void> {
-        const location = player.location;
+        const position = player.location;
+        const rotation = player.getRotation();
+        ScenarioManager.Instance().addAnchorToScenario(scenarioId, position, rotation);
 
-        ScenarioManager.Instance().addAnchorToScenario(scenarioId, location);
-
-        await this.showSuccessMessage(player, `현재 위치에 앵커가 추가되었습니다.\nx: ${location.x} \ny: ${location.y} \nz: ${location.z}`);
+        await this.showSuccessMessage(player, `현재 위치에 앵커가 추가되었습니다.\nx: ${position.x} \ny: ${position.y} \nz: ${position.z}  \nrx: ${rotation.x} \nry: ${rotation.y}`);
         this.showEditScenarioForm(player);
     }
 

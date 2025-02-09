@@ -1,28 +1,40 @@
-		import { Vector3, Entity, Dimension, system } from "@minecraft/server";
+import { Vector3, Vector2, Entity, Dimension, system, world } from "@minecraft/server";
 import { Util } from "../Util/Util";
 export class Anchor {
     public readonly id: number;
-    public readonly location: Vector3;
-    public readonly entity: Entity;
+    public readonly position: Vector3;
+    public readonly rotation: Vector2;
+    private _entity: Entity;
     public readonly dimension: Dimension; // 차원 정보 추가
 
-    constructor(id: number, location: Vector3, entity: Entity, dimension: Dimension) {
+    constructor(id: number, position: Vector3, rotation: Vector2, entity: Entity, dimension: Dimension) {
         this.id = id;
-        this.location = location;
-        this.entity = entity;
-        this.dimension = dimension; // 생성자에 차원 정보 추가
-        system.run(() => { 
-            this.entity.setProperty("vc:id", id); 
-            Util.tell(`l${this.entity.getProperty("vc:id") }`, "Mini9041");
-        });
+        this.position = position;
+        this.rotation = rotation;
+        this._entity = entity;
+        this.dimension = dimension;
 
+
+    }
+    public Init(): void {
+        this._entity.setProperty("vc:id", this.id);
+        system.runTimeout(() => {
+            Util.tell(`l${this._entity.getProperty("vc:id")}`, "Lim Develop");
+        }, 1);
     }
 
     public isEntityAlive(): boolean {
-        return this.entity && this.entity.isValid();
+        return this._entity && this._entity.isValid();
     }
 
-    public setEntity(entity: Entity): void {
-        (this.entity as any) = entity; // Entity를 업데이트
+    public get entity(): Entity {
+        return this._entity;
     }
+
+    public set entity(value: Entity) {
+        if (!value) return;
+        this._entity = value;
+        this._entity.setProperty("vc:id", this.id);
+    }
+
 }

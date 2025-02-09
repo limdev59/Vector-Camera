@@ -1,10 +1,10 @@
-			import { Vector3, world, Player, Dimension, system } from "@minecraft/server";
+import { Vector3, Vector2, world, Player, Dimension, system } from "@minecraft/server";
 import { Anchor } from "../Object/Anchor";
 import AnchorManager from "../Manager/AnchorManager";
 
 class ScenarioManager {
     private static _instance: ScenarioManager;
-    private scenarios: { id: number; name: string; description: string; dimension: Dimension; anchors: number[]; }[] = [];
+    private scenarios: { id: number; name: string; description: string; dimension: Dimension; anchors: Anchor[]; }[] = [];
     private nextScenarioId: number = 1;
     private selectedScenarios: Map<string, number> = new Map(); // 플레이어 이름에 따른 시나리오 선택
 
@@ -29,18 +29,66 @@ class ScenarioManager {
         });
     }
 
-    public createScenario(name: string, description: string, dimension: Dimension): void {
-    // 이름 중복 체크
-    const existingScenario = this.scenarios.find(s => s.name.toLowerCase() === name.toLowerCase());
-    if (existingScenario) {
-        console.error(`Scenario with name "${name}" already exists. Please choose a different name.`);
-        return; // 중복된 이름이 있으면 시나리오 생성 중지
+    private Update(): void {
+        this.visualizeScenarioPath(1, "vc:scenario_trail", 0.0);
     }
 
-    const scenario = { id: this.nextScenarioId++, name, description, dimension, anchors: [] };
-    this.scenarios.push(scenario);
-    console.log(`Scenario created with ID: ${scenario.id}, Name: ${scenario.name}`);
-}
+
+    private visualizeScenarioPath(scenarioId: number, particleType: string = "minecraft:flame", tension: number = 0.0): void {
+        const scenario = this.scenarios.find(s => s.id === scenarioId);
+        if (!scenario || scenario.anchors.length < 2) return;
+
+        const anchors = scenario.anchors.map(a => a.position);
+        for (let i = 0; i < anchors.length - 1; i++) {
+            const p0 = i > 0 ? anchors[i - 1] : anchors[i];
+            const p1 = anchors[i];
+            const p2 = anchors[i + 1];
+            const p3 = i < anchors.length - 2 ? anchors[i + 2] : anchors[i + 1];
+            this.spawnParticleCurve(p0, p1, p2, p3, particleType, tension);
+        }
+    }
+
+    private spawnParticleCurve(p0: Vector3, p1: Vector3, p2: Vector3, p3: Vector3, particleType: string, tension: number): void {
+        const steps = 20;
+        for (let i = 0; i <= steps; i++) {
+            const t = i / steps;
+            const pos = this.cardinalSpline(p0, p1, p2, p3, t, tension);
+            system.run(() => { world.getDimension("overworld").spawnParticle(particleType, pos) }
+            );
+        }
+    }
+
+    private cardinalSpline(p0: Vector3, p1: Vector3, p2: Vector3, p3: Vector3, t: number, tension: number): Vector3 {
+        const t2 = t * t;
+        const t3 = t2 * t;
+        const s = (1 - tension) / 2;
+
+        const b1 = -s * t3 + 2 * s * t2 - s * t;
+        const b2 = (2 - s) * t3 + (s - 3) * t2 + 1;
+        const b3 = (s - 2) * t3 + (3 - 2 * s) * t2 + s * t;
+        const b4 = s * t3 - s * t2;
+
+        return {
+            x: p0.x * b1 + p1.x * b2 + p2.x * b3 + p3.x * b4,
+            y: p0.y * b1 + p1.y * b2 + p2.y * b3 + p3.y * b4,
+            z: p0.z * b1 + p1.z * b2 + p2.z * b3 + p3.z * b4
+        };
+    }
+
+
+
+    public createScenario(name: string, description: string, dimension: Dimension): void {
+        // 이름 중복 체크
+        const existingScenario = this.scenarios.find(s => s.name.toLowerCase() === name.toLowerCase());
+        if (existingScenario) {
+            console.error(`Scenario with name "${name}" already exists. Please choose a different name.`);
+            return; // 중복된 이름이 있으면 시나리오 생성 중지
+        }
+
+        const scenario = { id: this.nextScenarioId++, name, description, dimension, anchors: [] };
+        this.scenarios.push(scenario);
+        console.log(`Scenario created with ID: ${scenario.id}, Name: ${scenario.name}`);
+    }
 
 
     public deleteScenario(id: number): boolean {
@@ -50,8 +98,8 @@ class ScenarioManager {
 
             // 해당 시나리오에 속한 모든 앵커 제거
             const anchorManager = AnchorManager.Instance();
-            scenario.anchors.forEach(anchorId => {
-                anchorManager.removeAnchor(anchorId);
+            scenario.anchors.forEach(anchor => {
+                anchorManager.removeAnchor(anchor.id);
             });
 
             // 시나리오 삭제
@@ -70,7 +118,7 @@ class ScenarioManager {
     }
 
 
-    public getScenarios(): { id: number; name: string; description: string; anchors: number[] }[] {
+    public getScenarios(): { id: number; name: string; description: string; anchors: Anchor[] }[] {
         return this.scenarios;
     }
 
@@ -88,8 +136,8 @@ class ScenarioManager {
         }
     }
 
-    public getSelectedScenario(player: Player): { id: number; name: string; description: string; anchors: number[] } | undefined {
-        console.error(`Current selectedScenarios Map: ${JSON.stringify(Array.from(this.selectedScenarios))}`);
+    public getSelectedScenario(player: Player): { id: number; name: string; description: string; anchors: Anchor[] } | undefined {
+        //console.error(`Current selectedScenarios Map: ${JSON.stringify(Array.from(this.selectedScenarios))}`);
         if (!player || !player.name) {
             return undefined;
         }
@@ -115,12 +163,12 @@ class ScenarioManager {
         return scenario ? scenario.name : null;
     }
 
-    public addAnchorToScenario(scenarioId: number, location: Vector3): boolean {
+    public addAnchorToScenario(scenarioId: number, position: Vector3, rotation: Vector2): boolean {
         const scenario = this.scenarios.find(s => s.id === scenarioId);
         if (scenario) {
             const anchorManager = AnchorManager.Instance();
-            const anchor = anchorManager.createAnchor(location, scenario.dimension);
-            scenario.anchors.push(anchor.id);
+            const anchor = anchorManager.createAnchor(position, rotation, scenario.dimension);
+            scenario.anchors.push(anchor);
             return true;
         }
         return false;
@@ -128,22 +176,25 @@ class ScenarioManager {
 
     public removeAnchorFromScenario(scenarioId: number, anchorId: number): boolean {
         const scenario = this.scenarios.find(s => s.id === scenarioId);
-        if (scenario) {
-            const index = scenario.anchors.indexOf(anchorId);
-            if (index >= 0) {
-                scenario.anchors.splice(index, 1);
-                const anchorManager = AnchorManager.Instance();
-                return anchorManager.removeAnchor(anchorId);
-            }
-        }
-        return false;
+        if (!scenario) return false; // 시나리오가 없으면 실패
+
+        // 앵커 목록에서 해당 ID를 가진 앵커 찾기
+        const index = scenario.anchors.findIndex(a => a.id === anchorId);
+        if (index === -1) return false; // 앵커가 없으면 실패
+
+        // 앵커 목록에서 제거
+        scenario.anchors.splice(index, 1);
+
+        // AnchorManager에서 제거
+        const anchorManager = AnchorManager.Instance();
+        return anchorManager.removeAnchor(anchorId);
     }
 
     public listAnchorsInScenario(scenarioId: number): Anchor[] | undefined {
-        const scenario = this.scenarios.find(s => s.id === scenarioId);
+        const scenario = this.scenarios.find(s => (s.id === scenarioId));
         if (scenario) {
             const anchorManager = AnchorManager.Instance();
-            return scenario.anchors.map(id => anchorManager.getAnchor(id)).filter(anchor => anchor !== undefined) as Anchor[];
+            return scenario.anchors.map(anc => anchorManager.getAnchor(anc.id)).filter(anchor => anchor !== undefined) as Anchor[];
         }
         return undefined;
     }

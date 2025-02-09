@@ -39,6 +39,11 @@ class Core {
         // 초기화 작업 수행
         this.initialized = true;
 
+        for (const dim of ["overworld", "nether", "the_end"]) {
+            world.getDimension(dim).runCommandAsync("kill @e[type=vc:anchor]");
+        }
+
+        //which is 15 mins
         // 매 틱마다 Update 호출
         system.runInterval(() => this.Update(), 1);
     }
@@ -48,7 +53,7 @@ class Core {
 
         // 앵커 매니저 업데이트 호출
         this.anchorManager.Update();
-
+        this.scenarioManager.Update();
         // 진행 상황을 관리하는 작업 수행
 
         // 추가적인 업데이트 로직을 여기에 추가할 수 있음

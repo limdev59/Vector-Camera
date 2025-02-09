@@ -10,7 +10,7 @@
 		},
 		"components": {
 			"minecraft:emitter_initialization": {
-				"creation_expression": "variable.size = 0.03;variable.lifetime = 1;variable.start_x = 1;variable.start_y = 0;variable.start_z = 1;variable.end_x = 1;variable.end_y = 2;variable.end_z = 1;v.cp1_x = -1;v.cp1_y = 0;v.cp1_z = -1;v.cp2_x = -1;v.cp2_y = 2;v.cp2_z = -1;"
+				"creation_expression": "variable.lifetime=1;variable.size=0.03;" //variable.start_x=query.property('vc:start_x');variable.start_y=query.property('vc:start_y');variable.start_z=query.property('vc:start_z');variable.end_x=query.property('vc:end_x');variable.end_y=query.property('vc:end_y');variable.end_z=query.property('vc:end_z');v.cp1_x=query.property('vc:cp1_x');v.cp1_y=query.property('vc:cp1_y');v.cp1_z=query.property('vc:cp1_z');v.cp2_x=query.property('vc:cp2_x');v.cp2_y=query.property('vc:cp2_y');v.cp2_z=query.property('vc:cp2_z');"
 			},
 			"minecraft:emitter_rate_steady": {
 				"spawn_rate": 100,
@@ -21,6 +21,9 @@
 			},
 			"minecraft:emitter_shape_point": {
 				"offset": [
+					// "v.start_x",
+					// "v.start_y",
+					// "v.start_z"
 					"Math.lerp(Math.lerp(Math.lerp(v.start_x, v.cp1_x, v.emitter_age),Math.lerp(v.cp1_x, v.cp2_x, v.emitter_age),v.emitter_age), Math.lerp(Math.lerp(v.cp1_x, v.cp2_x, v.emitter_age),Math.lerp(v.cp2_x, v.end_x, v.emitter_age),v.emitter_age),v.emitter_age)",
 					"Math.lerp(Math.lerp(Math.lerp(v.start_y, v.cp1_y, v.emitter_age),Math.lerp(v.cp1_y, v.cp2_y, v.emitter_age),v.emitter_age),Math.lerp(Math.lerp(v.cp1_y, v.cp2_y, v.emitter_age),Math.lerp(v.cp2_y, v.end_y, v.emitter_age),v.emitter_age),v.emitter_age)",
 					"Math.lerp(Math.lerp(Math.lerp(v.start_z, v.cp1_z, v.emitter_age),Math.lerp(v.cp1_z, v.cp2_z, v.emitter_age),v.emitter_age),Math.lerp(Math.lerp(v.cp1_z, v.cp2_z, v.emitter_age),Math.lerp(v.cp2_z, v.end_z, v.emitter_age),v.emitter_age),v.emitter_age)"

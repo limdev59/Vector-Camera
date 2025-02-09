@@ -71,7 +71,6 @@ class EventManager {
 
         if (player && itemStack?.typeId == "minecraft:wooden_axe") {
             event.cancel = true;
-            Util.tell(`${player.name} can't break blocks`, player);
             system.run(async () => {
                 try {
                     await UIManager.Instance().showMainForm(player);
